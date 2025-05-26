@@ -23,7 +23,7 @@
 1. **Clonar o repositório:**
 
 ```bash
-
+https://github.com/KhaledCoins/PonderadaComp2Ref/tree/main
 ```
 
 
