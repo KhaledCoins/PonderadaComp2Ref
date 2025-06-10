@@ -1,2 +1,119 @@
-<h2>Página 2</h2>
-<p>Conteúdo da Página 2.</p>
+<h2>Gerenciador de Tarefas</h2>
+<p>Lista de Tarefas:</p>
+
+<table id="tasksTable">
+  <thead>
+    <tr>
+      <th>Título</th>
+      <th>Status</th>
+      <th>Data Desejada</th>
+      <th>Data Limite</th>
+      <th>Importância</th>
+      <th>Progresso</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td colspan="7">Carregando tarefas...</td></tr>
+  </tbody>
+</table>
+
+<button id="refreshTasksBtn">Atualizar Lista</button>
+
+<form id="taskForm">
+  <h3>Cadastrar Nova Tarefa</h3>
+  <label for="title">Título:</label>
+  <input type="text" id="title" name="title" required>
+  <label for="description">Descrição:</label>
+  <textarea id="description" name="description"></textarea>
+  <label for="status">Status:</label>
+  <input type="text" id="status" name="status" required>
+  <label for="desired_date">Data Desejada:</label>
+  <input type="date" id="desired_date" name="desired_date">
+  <label for="deadline">Data Limite:</label>
+  <input type="date" id="deadline" name="deadline">
+  <label for="importance">Importância:</label>
+  <input type="number" id="importance" name="importance" min="1" max="5">
+  <label for="progress">Progresso (%):</label>
+  <input type="number" id="progress" name="progress" min="0" max="100">
+  <input type="submit" value="Cadastrar">
+</form>
+<div id="taskFormMsg"></div>
+
+<script>
+  async function fetchTasks() {
+    try {
+      const response = await fetch('/api/tarefas');
+      if (!response.ok) throw new Error('Erro ao buscar tarefas');
+      const tasks = await response.json();
+      const tableBody = document.querySelector('#tasksTable tbody');
+      tableBody.innerHTML = '';
+      if (tasks.length > 0) {
+        tasks.forEach(task => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${task.title}</td>
+            <td>${task.status || ''}</td>
+            <td>${task.desired_date ? task.desired_date.substring(0,10) : ''}</td>
+            <td>${task.deadline ? task.deadline.substring(0,10) : ''}</td>
+            <td>${task.importance || ''}</td>
+            <td>${task.progress || ''}</td>
+            <td><button onclick="deleteTask('${task.id}')">Excluir</button></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      } else {
+        tableBody.innerHTML = '<tr><td colspan="7">Nenhuma tarefa encontrada.</td></tr>';
+      }
+    } catch (error) {
+      const tableBody = document.querySelector('#tasksTable tbody');
+      tableBody.innerHTML = '<tr><td colspan="7">Erro ao carregar tarefas.</td></tr>';
+    }
+  }
+
+  fetchTasks();
+  document.getElementById('refreshTasksBtn').onclick = fetchTasks;
+
+  document.getElementById('taskForm').onsubmit = async function(e) {
+    e.preventDefault();
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const status = document.getElementById('status').value;
+    const desired_date = document.getElementById('desired_date').value;
+    const deadline = document.getElementById('deadline').value;
+    const importance = document.getElementById('importance').value;
+    const progress = document.getElementById('progress').value;
+    const msgDiv = document.getElementById('taskFormMsg');
+    msgDiv.textContent = '';
+    msgDiv.className = '';
+    try {
+      const response = await fetch('/api/tarefas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, status, desired_date, deadline, importance, progress })
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Erro ao cadastrar tarefa');
+      }
+      msgDiv.textContent = 'Tarefa cadastrada com sucesso!';
+      msgDiv.className = 'success';
+      document.getElementById('taskForm').reset();
+      fetchTasks();
+    } catch (error) {
+      msgDiv.textContent = error.message;
+      msgDiv.className = 'error';
+    }
+  }
+
+  async function deleteTask(id) {
+    if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
+    try {
+      const response = await fetch(`/api/tarefas/${id}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Erro ao excluir tarefa');
+      fetchTasks();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+</script>

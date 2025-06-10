@@ -14,22 +14,22 @@ db.connect()
     app.use(express.json());
 
     const userRoutes = require('./routes/userRoutes');
-    app.use('/users', userRoutes);
+    app.use('/api/users', userRoutes);
 
     const frontendRoutes = require('./routes/frontRoutes');
     app.use('/', frontendRoutes);
 
     const tarefaRoutes = require('./routes/tarefaRoutes');
-    app.use('/tarefas', tarefaRoutes);
+    app.use('/api/tarefas', tarefaRoutes);
 
     const categoriaRoutes = require('./routes/categoriaRoutes');
-    app.use('/categorias', categoriaRoutes);
+    app.use('/api/categorias', categoriaRoutes);
 
     const origemRoutes = require('./routes/origemRoutes');
-    app.use('/origens', origemRoutes);
+    app.use('/api/origens', origemRoutes);
 
     const agendaRoutes = require('./routes/agendaRoutes');
-    app.use('/agendas', agendaRoutes);
+    app.use('/api/agendas', agendaRoutes);
 
     // Middleware para lidar com erros de rota não encontrada
     app.use((req, res, next) => {

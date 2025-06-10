@@ -26,10 +26,12 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { name, email } = req.body;
-    const newUser = await userService.createUser(name, email);
+    console.log('Body recebido no cadastro:', req.body);
+    const { name, email, password } = req.body;
+    const newUser = await userService.createUser(name, email, password);
     res.status(201).json(newUser);
   } catch (error) {
+    console.error('Erro ao criar usuário:', error);
     res.status(500).json({ error: error.message });
   }
 };

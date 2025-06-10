@@ -16,11 +16,25 @@
   </tbody>
 </table>
 
+<button id="refreshBtn">Atualizar Lista</button>
+
+<form id="userForm">
+  <h3>Cadastrar Novo Usuário</h3>
+  <label for="name">Nome:</label>
+  <input type="text" id="name" name="name" required>
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required>
+  <label for="password">Senha:</label>
+  <input type="password" id="password" name="password" required>
+  <input type="submit" value="Cadastrar">
+</form>
+<div id="formMsg"></div>
+
 <script>
   // Função para buscar usuários da API e renderizar na tabela
   async function fetchUsers() {
     try {
-      const response = await fetch('/users');
+      const response = await fetch('/api/users');
       if (!response.ok) {
         throw new Error('Erro ao buscar usuários');
       }
@@ -51,4 +65,35 @@
 
   // Chama a função ao carregar a página
   fetchUsers();
+
+  // Botão de atualizar
+  document.getElementById('refreshBtn').onclick = fetchUsers;
+
+  // Formulário de cadastro de usuário
+  document.getElementById('userForm').onsubmit = async function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const msgDiv = document.getElementById('formMsg');
+    msgDiv.textContent = '';
+    msgDiv.className = '';
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: document.getElementById('password').value })
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Erro ao cadastrar usuário');
+      }
+      msgDiv.textContent = 'Usuário cadastrado com sucesso!';
+      msgDiv.className = 'success';
+      document.getElementById('userForm').reset();
+      fetchUsers();
+    } catch (error) {
+      msgDiv.textContent = error.message;
+      msgDiv.className = 'error';
+    }
+  }
 </script>
