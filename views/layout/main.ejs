@@ -1,29 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= pageTitle %></title>  
-  <style>
-    <%- include('../css/style.css'); %>
-  </style>
-</head>
-<body>
-  <!-- Inclui o cabeçalho como um partial -->
-  <%- include('../components/header') %>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= pageTitle %> | TheBoard</title>
+    <!-- Estilos globais -->
+    <style>
+      <%- include('../css/style.css'); %>
+    </style>
+  </head>
+  <body>
+    <!-- Cabeçalho -->
+    <%- include('../components/header') %>
 
-  <main>
-    <!-- Renderiza o conteúdo da página específica -->
-    <%- include(content) %>
-  </main>
+    <main class="container">
+      <!-- Conteúdo específico da página -->
+      <%- include(content) %>
+    </main>
 
-  <footer>
-    <!-- Rodapé comum aqui -->
-    <p>Rodapé da Aplicação</p>
-  </footer>
-
-  <!-- Adicione scripts JS se necessário -->
-  <script src="/js/script.js"></script>
-  
-</body>
-</html>
+    <!-- Rodapé -->
+    <%- include('../components/footer') %>
+  </body>
+</html> 

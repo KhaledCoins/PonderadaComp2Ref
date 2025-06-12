@@ -17,4 +17,8 @@ exports.editarTarefa = (dados) => {
 
 exports.excluirTarefa = (id) => {
   return db.query('DELETE FROM tasks WHERE id = $1 RETURNING *', [id]);
+};
+
+exports.obterTarefa = (id) => {
+  return db.query('SELECT * FROM tasks WHERE id = $1', [id]);
 }; 

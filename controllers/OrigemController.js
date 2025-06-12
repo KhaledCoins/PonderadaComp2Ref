@@ -2,8 +2,8 @@ const origemModel = require('../models/origemModel');
 
 // Criar uma nova origem
 exports.criarOrigem = async (req, res) => {
-  const { nome, relevancia } = req.body;
-  const values = [nome, relevancia];
+  const { name, relevance } = req.body;
+  const values = [name, relevance];
   try {
     const result = await origemModel.criarOrigem(values);
     res.status(201).json(result.rows[0]);
@@ -25,8 +25,8 @@ exports.listarOrigens = async (req, res) => {
 // Editar uma origem
 exports.editarOrigem = async (req, res) => {
   const { id } = req.params;
-  const { nome, relevancia } = req.body;
-  const values = [nome, relevancia, id];
+  const { name, relevance } = req.body;
+  const values = [name, relevance, id];
   try {
     const result = await origemModel.editarOrigem(values);
     if (result.rows.length === 0) {

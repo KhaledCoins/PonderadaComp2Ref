@@ -4,6 +4,7 @@ const app = express();
 const db = require('./config/db');
 const path = require('path');
 
+// View engine setup (MVC)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -16,8 +17,11 @@ db.connect()
     const userRoutes = require('./routes/userRoutes');
     app.use('/api/users', userRoutes);
 
-    const frontendRoutes = require('./routes/frontRoutes');
-    app.use('/', frontendRoutes);
+    // Remove unused static serve to public (folder will be removed)
+
+    // Frontend routes (EJS views)
+    const frontRoutes = require('./routes/frontRoutes');
+    app.use('/', frontRoutes);
 
     const tarefaRoutes = require('./routes/tarefaRoutes');
     app.use('/api/tarefas', tarefaRoutes);

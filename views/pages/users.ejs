@@ -1,0 +1,90 @@
+<h2>Usuários</h2>
+
+<div class="section">
+  <table id="usersTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Carregando...</td></tr>
+    </tbody>
+  </table>
+  <button id="refreshUsersBtn">Atualizar Lista</button>
+</div>
+
+<div class="section">
+  <h3>Novo Usuário</h3>
+  <form id="userForm" autocomplete="off">
+    <label>Nome
+      <input type="text" id="name" required />
+    </label>
+    <label>Email
+      <input type="email" id="email" required />
+    </label>
+    <label>Senha
+      <input type="password" id="password" required />
+    </label>
+    <input type="submit" value="Cadastrar" />
+  </form>
+  <div id="userFormMsg"></div>
+</div>
+
+<script>
+  const usersEndpoint = '/api/users';
+
+  async function loadUsers() {
+    try {
+      const res = await fetch(usersEndpoint);
+      const data = await res.json();
+      const tbody = document.querySelector('#usersTable tbody');
+      tbody.innerHTML = '';
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">Nenhum usuário encontrado</td></tr>';
+        return;
+      }
+      data.forEach(u => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${u.id}</td><td>${u.name}</td><td>${u.email}</td>`;
+        tbody.appendChild(row);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  document.getElementById('refreshUsersBtn').addEventListener('click', loadUsers);
+
+  document.getElementById('userForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('userFormMsg');
+    msg.textContent = '';
+    try {
+      const res = await fetch(usersEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Erro ao cadastrar');
+      }
+      msg.textContent = 'Usuário cadastrado!';
+      msg.className = 'success';
+      e.target.reset();
+      loadUsers();
+    } catch (err) {
+      msg.textContent = err.message;
+      msg.className = 'error';
+    }
+  });
+
+  // Initial load
+  loadUsers();
+</script> 

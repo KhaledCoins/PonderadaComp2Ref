@@ -1,0 +1,189 @@
+<h2>Tarefas</h2>
+
+<div class="section">
+  <table id="tasksTable">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Status</th>
+        <th>Prazo</th>
+        <th>Progresso</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5">Carregando...</td></tr>
+    </tbody>
+  </table>
+  <button id="refreshTasksBtn">Atualizar Lista</button>
+</div>
+
+<div class="section">
+  <h3>Nova Tarefa</h3>
+  <form id="taskForm" autocomplete="off">
+    <label>Usuário
+      <select id="userSelect"></select>
+    </label>
+    <label>Categoria
+      <select id="categorySelect"></select>
+    </label>
+    <label>Origem
+      <select id="originSelect"></select>
+    </label>
+    <label>Título
+      <input type="text" id="title" required />
+    </label>
+    <label>Descrição
+      <textarea id="description"></textarea>
+    </label>
+    <label>Status
+      <input type="text" id="status" />
+    </label>
+    <label>Data Limite
+      <input type="date" id="deadline" />
+    </label>
+    <label>Importância (1-5)
+      <input type="number" id="importance" min="1" max="5" />
+    </label>
+    <label>Progresso (%)
+      <input type="number" id="progress" min="0" max="100" />
+    </label>
+    <input type="submit" value="Cadastrar" />
+  </form>
+  <div id="taskFormMsg"></div>
+</div>
+
+<script>
+  const tasksEndpoint = '/api/tarefas';
+  const usersEndpoint = '/api/users';
+  const categoriesEndpoint = '/api/categorias';
+  const originsEndpoint = '/api/origens';
+
+  async function loadTasks() {
+    try {
+      const res = await fetch(tasksEndpoint);
+      const data = await res.json();
+      const tbody = document.querySelector('#tasksTable tbody');
+      tbody.innerHTML = '';
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5">Nenhuma tarefa cadastrada</td></tr>';
+        return;
+      }
+      data.forEach(t => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${t.title}</td>
+          <td>${t.status || ''}</td>
+          <td>${t.deadline ? t.deadline.substring(0,10) : ''}</td>
+          <td>${t.progress || ''}%</td>
+          <td><button onclick="deleteTask('${t.id}')">Excluir</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  async function loadCategoriesSelect() {
+    try {
+      const res = await fetch(categoriesEndpoint);
+      const data = await res.json();
+      const sel = document.getElementById('categorySelect');
+      sel.innerHTML = '<option value="">--Selecione--</option>';
+      data.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function loadOriginsSelect() {
+    try {
+      const res = await fetch(originsEndpoint);
+      const data = await res.json();
+      const sel = document.getElementById('originSelect');
+      sel.innerHTML = '<option value="">--Selecione--</option>';
+      data.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.id;
+        opt.textContent = o.name;
+        sel.appendChild(opt);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function loadUsersSelect() {
+    try {
+      const res = await fetch(usersEndpoint);
+      const data = await res.json();
+      const sel = document.getElementById('userSelect');
+      sel.innerHTML = '<option value="">--Selecione--</option>';
+      data.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.textContent = u.name;
+        sel.appendChild(opt);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  document.getElementById('refreshTasksBtn').addEventListener('click', loadTasks);
+
+  document.getElementById('taskForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const status = document.getElementById('status').value;
+    const deadline = document.getElementById('deadline').value;
+    const importance = document.getElementById('importance').value;
+    const progress = document.getElementById('progress').value;
+    const user_id = document.getElementById('userSelect').value;
+    const category_id = document.getElementById('categorySelect').value;
+    const origin_id = document.getElementById('originSelect').value;
+    const msg = document.getElementById('taskFormMsg');
+    msg.textContent = '';
+    try {
+      const res = await fetch(tasksEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, status, deadline, importance, progress, user_id, category_id, origin_id })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Erro no cadastro');
+      }
+      msg.textContent = 'Tarefa cadastrada!';
+      msg.className = 'success';
+      e.target.reset();
+      loadTasks();
+    } catch(err) {
+      msg.textContent = err.message;
+      msg.className = 'error';
+    }
+  });
+
+  async function deleteTask(id) {
+    if (!confirm('Excluir tarefa?')) return;
+    try {
+      const res = await fetch(`${tasksEndpoint}/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao excluir');
+      loadTasks();
+    } catch(err) {
+      alert(err.message);
+    }
+  }
+
+  loadUsersSelect();
+  loadCategoriesSelect();
+  loadOriginsSelect();
+  loadTasks();
+</script> 

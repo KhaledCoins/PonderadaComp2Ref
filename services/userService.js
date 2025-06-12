@@ -36,11 +36,11 @@ const createUser = async (name, email, password) => {
 };
 
 // Função para atualizar um usuário por ID
-const updateUser = async (id, name, email) => {
+const updateUser = async (id, name, email, password = null) => {
   try {
     const result = await db.query(
-      'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *',
-      [name, email, id]
+      'UPDATE users SET name = $1, email = $2, password = COALESCE($3, password) WHERE id = $4 RETURNING *',
+      [name, email, password, id]
     );
     return result.rows[0];
   } catch (error) {

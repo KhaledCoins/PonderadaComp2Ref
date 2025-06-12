@@ -1,0 +1,93 @@
+<h2>Origens</h2>
+
+<div class="section">
+  <table id="originsTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Relevância</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Carregando...</td></tr>
+    </tbody>
+  </table>
+  <button id="refreshOriginsBtn">Atualizar Lista</button>
+</div>
+
+<div class="section">
+  <h3>Nova Origem</h3>
+  <form id="originForm" autocomplete="off">
+    <label>Nome
+      <input type="text" id="originName" required />
+    </label>
+    <label>Relevância
+      <input type="number" id="originRelevance" min="1" max="10" />
+    </label>
+    <input type="submit" value="Cadastrar" />
+  </form>
+  <div id="originFormMsg"></div>
+</div>
+
+<div id="originVisitsMsg" style="margin-bottom:10px;"></div>
+
+<script>
+  const originsEndpoint = '/api/origens';
+
+  async function loadOrigins() {
+    try {
+      const res = await fetch(originsEndpoint);
+      const data = await res.json();
+      const tbody = document.querySelector('#originsTable tbody');
+      tbody.innerHTML = '';
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">Nenhuma origem cadastrada</td></tr>';
+        return;
+      }
+      data.forEach(o => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${o.id}</td><td>${o.name}</td><td>${o.relevance || ''}</td>`;
+        tbody.appendChild(row);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  document.getElementById('refreshOriginsBtn').addEventListener('click', loadOrigins);
+
+  document.getElementById('originForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('originName').value;
+    const relevance = document.getElementById('originRelevance').value;
+    const msg = document.getElementById('originFormMsg');
+    msg.textContent = '';
+    try {
+      const res = await fetch(originsEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, relevance })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Erro ao cadastrar');
+      }
+      msg.textContent = 'Origem cadastrada!';
+      msg.className = 'success';
+      e.target.reset();
+      loadOrigins();
+    } catch (err) {
+      msg.textContent = err.message;
+      msg.className = 'error';
+    }
+  });
+
+  // Track visits to this page in sessionStorage
+  let visits = parseInt(sessionStorage.getItem('originsVisitCount')) || 0;
+  visits++;
+  sessionStorage.setItem('originsVisitCount', visits);
+  document.getElementById('originVisitsMsg').textContent = `Você visitou a página de Origens ${visits} vezes nesta sessão.`;
+
+  loadOrigins();
+</script> 

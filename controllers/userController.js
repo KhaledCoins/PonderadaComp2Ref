@@ -38,8 +38,8 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const { name, email } = req.body;
-    const updatedUser = await userService.updateUser(req.params.id, name, email);
+    const { name, email, password } = req.body;
+    const updatedUser = await userService.updateUser(req.params.id, name, email, password);
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {

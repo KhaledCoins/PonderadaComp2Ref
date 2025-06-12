@@ -2,7 +2,18 @@ const tarefaModel = require('../models/tarefaModel');
 
 // Criar uma nova tarefa
 exports.criarTarefa = async (req, res) => {
-  const { title, description, status, desired_date, deadline, importance, progress, user_id, category_id, origin_id } = req.body;
+  const {
+    title,
+    description = null,
+    status = null,
+    desired_date = null,
+    deadline = null,
+    importance = null,
+    progress = null,
+    user_id = null,
+    category_id = null,
+    origin_id = null,
+  } = req.body;
   const values = [title, description, status, desired_date, deadline, importance, progress, user_id, category_id, origin_id];
   try {
     const result = await tarefaModel.criarTarefa(values);
@@ -25,8 +36,19 @@ exports.listarTarefas = async (req, res) => {
 // Editar uma tarefa
 exports.editarTarefa = async (req, res) => {
   const { id } = req.params;
-  const { title, description, status, desired_date, deadline, importance, progress, user_id, category_id, origin_id } = req.body;
-  const values = [title, description, status, desired_date, deadline, importance, progress, user_id, category_id, origin_id, id];
+  const {
+    title: tTitle,
+    description: tDescription = null,
+    status: tStatus = null,
+    desired_date: tDesired = null,
+    deadline: tDeadline = null,
+    importance: tImportance = null,
+    progress: tProgress = null,
+    user_id: tUser = null,
+    category_id: tCategory = null,
+    origin_id: tOrigin = null,
+  } = req.body;
+  const values = [tTitle, tDescription, tStatus, tDesired, tDeadline, tImportance, tProgress, tUser, tCategory, tOrigin, id];
   try {
     const result = await tarefaModel.editarTarefa(values);
     if (result.rows.length === 0) {
@@ -47,6 +69,20 @@ exports.excluirTarefa = async (req, res) => {
       return res.status(404).json({ message: 'Tarefa não encontrada' });
     }
     res.status(200).json({ message: 'Tarefa excluída com sucesso' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Obter uma tarefa
+exports.obterTarefa = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await tarefaModel.obterTarefa(id);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Tarefa não encontrada' });
+    }
+    res.status(200).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

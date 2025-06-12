@@ -1,0 +1,85 @@
+<h2>Categorias</h2>
+
+<div class="section">
+  <table id="categoriesTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Prioridade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Carregando...</td></tr>
+    </tbody>
+  </table>
+  <button id="refreshCategoriesBtn">Atualizar Lista</button>
+</div>
+
+<div class="section">
+  <h3>Nova Categoria</h3>
+  <form id="categoryForm" autocomplete="off">
+    <label>Nome
+      <input type="text" id="catName" required />
+    </label>
+    <label>Prioridade
+      <input type="number" id="catPriority" min="1" max="10" />
+    </label>
+    <input type="submit" value="Cadastrar" />
+  </form>
+  <div id="categoryFormMsg"></div>
+</div>
+
+<script>
+  const categoriesEndpoint = '/api/categorias';
+
+  async function loadCategories() {
+    try {
+      const res = await fetch(categoriesEndpoint);
+      const data = await res.json();
+      const tbody = document.querySelector('#categoriesTable tbody');
+      tbody.innerHTML = '';
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">Nenhuma categoria cadastrada</td></tr>';
+        return;
+      }
+      data.forEach(c => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${c.id}</td><td>${c.name}</td><td>${c.priority || ''}</td>`;
+        tbody.appendChild(row);
+      });
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  document.getElementById('refreshCategoriesBtn').addEventListener('click', loadCategories);
+
+  document.getElementById('categoryForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('catName').value;
+    const priority = document.getElementById('catPriority').value;
+    const msg = document.getElementById('categoryFormMsg');
+    msg.textContent = '';
+    try {
+      const res = await fetch(categoriesEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, priority })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Erro ao cadastrar');
+      }
+      msg.textContent = 'Categoria cadastrada!';
+      msg.className = 'success';
+      e.target.reset();
+      loadCategories();
+    } catch(err) {
+      msg.textContent = err.message;
+      msg.className = 'error';
+    }
+  });
+
+  loadCategories();
+</script> 
