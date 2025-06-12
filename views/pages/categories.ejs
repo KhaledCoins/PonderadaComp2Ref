@@ -7,10 +7,11 @@
         <th>ID</th>
         <th>Nome</th>
         <th>Prioridade</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="3">Carregando...</td></tr>
+      <tr><td colspan="4">Carregando...</td></tr>
     </tbody>
   </table>
   <button id="refreshCategoriesBtn">Atualizar Lista</button>
@@ -40,12 +41,12 @@
       const tbody = document.querySelector('#categoriesTable tbody');
       tbody.innerHTML = '';
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3">Nenhuma categoria cadastrada</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4">Nenhuma categoria cadastrada</td></tr>';
         return;
       }
       data.forEach(c => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${c.id}</td><td>${c.name}</td><td>${c.priority || ''}</td>`;
+        row.innerHTML = `<td>${c.id}</td><td>${c.name}</td><td>${c.priority || ''}</td><td><button onclick="deleteCategory('${c.id}')">Excluir</button></td>`;
         tbody.appendChild(row);
       });
     } catch(err) {
@@ -80,6 +81,17 @@
       msg.className = 'error';
     }
   });
+
+  async function deleteCategory(id) {
+    if (!confirm('Excluir categoria?')) return;
+    try {
+      const res = await fetch(`${categoriesEndpoint}/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao excluir');
+      loadCategories();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
 
   loadCategories();
 </script> 

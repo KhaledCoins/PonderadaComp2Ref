@@ -7,10 +7,11 @@
         <th>ID</th>
         <th>Nome</th>
         <th>Relevância</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="3">Carregando...</td></tr>
+      <tr><td colspan="4">Carregando...</td></tr>
     </tbody>
   </table>
   <button id="refreshOriginsBtn">Atualizar Lista</button>
@@ -42,12 +43,12 @@
       const tbody = document.querySelector('#originsTable tbody');
       tbody.innerHTML = '';
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3">Nenhuma origem cadastrada</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4">Nenhuma origem cadastrada</td></tr>';
         return;
       }
       data.forEach(o => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${o.id}</td><td>${o.name}</td><td>${o.relevance || ''}</td>`;
+        row.innerHTML = `<td>${o.id}</td><td>${o.name}</td><td>${o.relevance || ''}</td><td><button onclick="deleteOrigin('${o.id}')">Excluir</button></td>`;
         tbody.appendChild(row);
       });
     } catch (err) {
@@ -82,6 +83,17 @@
       msg.className = 'error';
     }
   });
+
+  async function deleteOrigin(id) {
+    if (!confirm('Excluir origem?')) return;
+    try {
+      const res = await fetch(`${originsEndpoint}/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao excluir');
+      loadOrigins();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
 
   // Track visits to this page in sessionStorage
   let visits = parseInt(sessionStorage.getItem('originsVisitCount')) || 0;

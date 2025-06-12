@@ -7,10 +7,11 @@
         <th>ID</th>
         <th>Nome</th>
         <th>Email</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="3">Carregando...</td></tr>
+      <tr><td colspan="4">Carregando...</td></tr>
     </tbody>
   </table>
   <button id="refreshUsersBtn">Atualizar Lista</button>
@@ -43,12 +44,12 @@
       const tbody = document.querySelector('#usersTable tbody');
       tbody.innerHTML = '';
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3">Nenhum usuário encontrado</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4">Nenhum usuário encontrado</td></tr>';
         return;
       }
       data.forEach(u => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${u.id}</td><td>${u.name}</td><td>${u.email}</td>`;
+        row.innerHTML = `<td>${u.id}</td><td>${u.name}</td><td>${u.email}</td><td><button onclick="deleteUser('${u.id}')">Excluir</button></td>`;
         tbody.appendChild(row);
       });
     } catch (err) {
@@ -84,6 +85,17 @@
       msg.className = 'error';
     }
   });
+
+  async function deleteUser(id) {
+    if (!confirm('Excluir usuário?')) return;
+    try {
+      const res = await fetch(`${usersEndpoint}/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erro ao excluir');
+      loadUsers();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
 
   // Initial load
   loadUsers();
