@@ -38,11 +38,11 @@ Configuração do Banco de Dados
 
 1. **Criar banco de dados:**
     
-DB_USER=postgres.koeiopqqlkgjjbfkftkr
-DB_HOST=aws-0-sa-east-1.pooler.supabase.com
+DB_USER=postgres.userexamplo
+DB_HOST=hostexamplo.supabase.com
 DB_DATABASE=postgres
-DB_PASSWORD=VE33226sp993@
-DB_PORT=6543
+DB_PASSWORD=yourpassword
+DB_PORT=5432
 DB_SSL=false
 PORT=3000
     
@@ -89,8 +89,8 @@ Estrutura de Diretórios
 * **`controllers/`**: Controladores da aplicação (lógica de negócio).
 * **`models/`**: Modelos da aplicação (definições de dados e interações com o banco de dados).
 * **`routes/`**: Rotas da aplicação.
-* **`tests/`**: Testes automatizados.
 * **`views/`**: Views da aplicação (se aplicável).
+* **`documentos`**: Documentação do Projeto.
 
 
 Autor
