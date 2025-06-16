@@ -1,9 +1,0 @@
-CREATE TABLE IF NOT EXISTS tasks (
-    id SERIAL PRIMARY KEY,
-    titulo VARCHAR(255) NOT NULL,
-    descricao TEXT,
-    data_limite TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'pendente',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-); 

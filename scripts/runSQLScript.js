@@ -15,14 +15,17 @@ const pool = new Pool({
 });
 
 const runSQLScript = async () => {
-  const filePath = path.join(__dirname, 'init.sql');
-  const sql = fs.readFileSync(filePath, 'utf8');
+  const initPath = path.join(__dirname, 'init.sql');
+  const seedsPath = path.join(__dirname, 'seeds.sql');
+  const initSql = fs.readFileSync(initPath, 'utf8');
+  const seedsSql = fs.readFileSync(seedsPath, 'utf8');
 
   try {
-    await pool.query(sql);
-    console.log('Script SQL executado com sucesso!');
+    await pool.query(initSql);
+    await pool.query(seedsSql);
+    console.log('Scripts SQL (init + seeds) executados com sucesso!');
   } catch (err) {
-    console.error('Erro ao executar o script SQL:', err);
+    console.error('Erro ao executar os scripts SQL:', err);
   } finally {
     await pool.end();
   }
