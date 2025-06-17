@@ -2,19 +2,19 @@ const { Pool } = require('pg');
 const pool = new Pool();
 
 class Task {
-    static async create({ titulo, descricao, data_limite, status }) {
+    static async create({ title, description, deadline, status }) {
         const query = `
-            INSERT INTO tasks (titulo, descricao, data_limite, status)
+            INSERT INTO tasks (title, description, deadline, status)
             VALUES ($1, $2, $3, $4)
             RETURNING *
         `;
-        const values = [titulo, descricao, data_limite, status];
+        const values = [title, description, deadline, status];
         const result = await pool.query(query, values);
         return result.rows[0];
     }
 
     static async findAll() {
-        const query = 'SELECT * FROM tasks ORDER BY data_limite ASC';
+        const query = 'SELECT * FROM tasks ORDER BY deadline ASC';
         const result = await pool.query(query);
         return result.rows;
     }
@@ -25,14 +25,14 @@ class Task {
         return result.rows[0];
     }
 
-    static async update(id, { titulo, descricao, data_limite, status }) {
+    static async update(id, { title, description, deadline, status }) {
         const query = `
             UPDATE tasks
-            SET titulo = $1, descricao = $2, data_limite = $3, status = $4
+            SET title = $1, description = $2, deadline = $3, status = $4
             WHERE id = $5
             RETURNING *
         `;
-        const values = [titulo, descricao, data_limite, status, id];
+        const values = [title, description, deadline, status, id];
         const result = await pool.query(query, values);
         return result.rows[0];
     }

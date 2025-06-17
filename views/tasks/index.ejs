@@ -20,10 +20,10 @@
                 <form action="/tasks" method="POST">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <input type="text" class="form-control" name="titulo" placeholder="Título" required>
+                            <input type="text" class="form-control" name="title" placeholder="Título" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <input type="datetime-local" class="form-control" name="data_limite" required>
+                            <input type="datetime-local" class="form-control" name="deadline" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <select class="form-control" name="status" required>
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <textarea class="form-control" name="descricao" placeholder="Descrição" rows="2"></textarea>
+                        <textarea class="form-control" name="description" placeholder="Descrição" rows="2"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Adicionar Tarefa</button>
                 </form>
@@ -51,7 +51,7 @@
                             <tr>
                                 <th>Título</th>
                                 <th>Descrição</th>
-                                <th>Data Limite</th>
+                                <th>Deadline</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
@@ -59,9 +59,9 @@
                         <tbody>
                             <% tasks.forEach(task => { %>
                                 <tr>
-                                    <td><%= task.titulo %></td>
-                                    <td><%= task.descricao %></td>
-                                    <td><%= new Date(task.data_limite).toLocaleString() %></td>
+                                    <td><%= task.title %></td>
+                                    <td><%= task.description %></td>
+                                    <td><%= new Date(task.deadline).toLocaleString() %></td>
                                     <td>
                                         <span class="badge bg-<%= task.status === 'concluida' ? 'success' : task.status === 'em_andamento' ? 'warning' : 'secondary' %>">
                                             <%= task.status %>

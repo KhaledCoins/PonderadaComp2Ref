@@ -13,8 +13,8 @@ class TaskController {
 
     static async create(req, res) {
         try {
-            const { titulo, descricao, data_limite, status } = req.body;
-            await Task.create({ titulo, descricao, data_limite, status });
+            const { title, description, deadline, status } = req.body;
+            await Task.create({ title, description, deadline, status });
             res.redirect('/tasks');
         } catch (error) {
             console.error('Erro ao criar tarefa:', error);
@@ -37,8 +37,8 @@ class TaskController {
 
     static async update(req, res) {
         try {
-            const { titulo, descricao, data_limite, status } = req.body;
-            await Task.update(req.params.id, { titulo, descricao, data_limite, status });
+            const { title, description, deadline, status } = req.body;
+            await Task.update(req.params.id, { title, description, deadline, status });
             res.redirect('/tasks');
         } catch (error) {
             console.error('Erro ao atualizar tarefa:', error);
