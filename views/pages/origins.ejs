@@ -4,17 +4,17 @@
   <table id="originsTable">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Relevância</th>
-        <th>Ações</th>
+        <th>🆔 ID</th>
+        <th>🎯 Nome</th>
+        <th>📊 Relevância</th>
+        <th>🔧 Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="4">Carregando...</td></tr>
+      <tr><td colspan="4" class="loading">⏳ Carregando origens...</td></tr>
     </tbody>
   </table>
-  <button id="refreshOriginsBtn">Atualizar Lista</button>
+  <button id="refreshOriginsBtn">🔄 Atualizar Lista</button>
 </div>
 
 <div class="section">
@@ -26,12 +26,12 @@
     <label>Relevância
       <input type="number" id="originRelevance" min="1" max="10" />
     </label>
-    <input type="submit" value="Cadastrar" />
+    <input type="submit" value="🎯 Cadastrar Origem" />
   </form>
   <div id="originFormMsg"></div>
 </div>
 
-<div id="originVisitsMsg" style="margin-bottom:10px;"></div>
+<div class="section" id="originVisitsMsg" style="text-align: center; font-style: italic; color: #667eea;"></div>
 
 <script>
   const originsEndpoint = '/api/origens';
@@ -43,12 +43,27 @@
       const tbody = document.querySelector('#originsTable tbody');
       tbody.innerHTML = '';
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4">Nenhuma origem cadastrada</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhuma origem cadastrada ainda</td></tr>';
         return;
       }
       data.forEach(o => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${o.id}</td><td>${o.name}</td><td>${o.relevance || ''}</td><td><button onclick="deleteOrigin('${o.id}')">Excluir</button></td>`;
+
+        // Relevance indicator
+        const relevance = o.relevance || 0;
+        let relevanceIndicator = '<div class="importance-indicator">';
+        for (let i = 1; i <= 5; i++) {
+          const filled = i <= relevance ? 'filled' : '';
+          relevanceIndicator += `<span class="importance-star ${filled}">★</span>`;
+        }
+        relevanceIndicator += `</div><small>Nível ${relevance}</small>`;
+
+        row.innerHTML = `
+          <td><code>${o.id.substring(0, 8)}...</code></td>
+          <td><strong>${o.name}</strong></td>
+          <td>${relevanceIndicator}</td>
+          <td><button onclick="deleteOrigin('${o.id}')">🗑️ Excluir</button></td>
+        `;
         tbody.appendChild(row);
       });
     } catch (err) {
@@ -99,7 +114,7 @@
   let visits = parseInt(sessionStorage.getItem('originsVisitCount')) || 0;
   visits++;
   sessionStorage.setItem('originsVisitCount', visits);
-  document.getElementById('originVisitsMsg').textContent = `Você visitou a página de Origens ${visits} vezes nesta sessão.`;
+  document.getElementById('originVisitsMsg').innerHTML = `📊 Você visitou a página de Origens <strong>${visits}</strong> ${visits === 1 ? 'vez' : 'vezes'} nesta sessão.`;
 
   loadOrigins();
 </script> 

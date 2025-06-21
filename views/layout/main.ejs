@@ -20,5 +20,34 @@
 
     <!-- Rodapé -->
     <%- include('../components/footer') %>
+
+    <!-- Script para marcar página ativa na navegação -->
+    <script>
+      // Aguarda o DOM estar carregado
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initNavigation);
+      } else {
+        initNavigation();
+      }
+
+      function initNavigation() {
+        try {
+          const currentPath = window.location.pathname;
+          const navLinks = document.querySelectorAll('.nav-link');
+
+          navLinks.forEach(link => {
+            // Remove classe active de todos os links primeiro
+            link.classList.remove('active');
+
+            // Adiciona classe active ao link atual
+            if (link.getAttribute('href') === currentPath) {
+              link.classList.add('active');
+            }
+          });
+        } catch (error) {
+          console.error('Erro ao inicializar navegação:', error);
+        }
+      }
+    </script>
   </body>
-</html> 
+</html>

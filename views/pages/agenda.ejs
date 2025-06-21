@@ -4,18 +4,18 @@
   <table id="agendaTable">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Task ID</th>
-        <th>Início</th>
-        <th>Fim</th>
-        <th>Notas</th>
+        <th>🆔 ID</th>
+        <th>📝 Tarefa</th>
+        <th>🕐 Início</th>
+        <th>🕕 Fim</th>
+        <th>📋 Notas</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="5">Carregando...</td></tr>
+      <tr><td colspan="5" class="loading">⏳ Carregando agenda...</td></tr>
     </tbody>
   </table>
-  <button id="refreshAgendaBtn">Atualizar Lista</button>
+  <button id="refreshAgendaBtn">🔄 Atualizar Lista</button>
 </div>
 
 <div class="section">
@@ -33,7 +33,7 @@
     <label>Notas
       <textarea id="notes"></textarea>
     </label>
-    <input type="submit" value="Cadastrar" />
+    <input type="submit" value="📅 Cadastrar na Agenda" />
   </form>
   <div id="agendaFormMsg"></div>
 </div>
@@ -51,18 +51,40 @@
       tbody.innerHTML = '';
       const autoTasks = tasks.filter(t => t.deadline || t.desired_date);
       if (agendas.length === 0 && autoTasks.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5">Nenhum registro</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum registro na agenda ainda</td></tr>';
         return;
       }
+
+      // Manual agenda entries
       agendas.forEach(a => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${a.id}</td><td>${a.task_id}</td><td>${a.start_time || ''}</td><td>${a.end_time || ''}</td><td>${a.notes || ''}</td>`;
+        const startTime = a.start_time ? new Date(a.start_time).toLocaleString('pt-BR') : '-';
+        const endTime = a.end_time ? new Date(a.end_time).toLocaleString('pt-BR') : '-';
+
+        row.innerHTML = `
+          <td><code>${a.id.substring(0, 8)}...</code></td>
+          <td><code>${a.task_id.substring(0, 8)}...</code></td>
+          <td>${startTime}</td>
+          <td>${endTime}</td>
+          <td>${a.notes || '<em>Sem notas</em>'}</td>
+        `;
         tbody.appendChild(row);
       });
+
+      // Auto-generated entries from tasks with dates
       autoTasks.forEach(t => {
         const date = t.deadline ? t.deadline.substring(0,10) : t.desired_date.substring(0,10);
+        const formattedDate = new Date(date).toLocaleDateString('pt-BR');
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${t.id}</td><td>${t.id}</td><td>${date}</td><td></td><td>Automático</td>`;
+        row.style.backgroundColor = 'rgba(102, 126, 234, 0.05)';
+
+        row.innerHTML = `
+          <td><code>${t.id.substring(0, 8)}...</code></td>
+          <td><strong>${t.title}</strong></td>
+          <td>${formattedDate}</td>
+          <td>-</td>
+          <td><span style="color: #667eea; font-style: italic;">🤖 Gerado automaticamente</span></td>
+        `;
         tbody.appendChild(row);
       });
     } catch (err) {

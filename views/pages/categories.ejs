@@ -4,17 +4,17 @@
   <table id="categoriesTable">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Prioridade</th>
-        <th>Ações</th>
+        <th>🆔 ID</th>
+        <th>📂 Nome</th>
+        <th>🔢 Prioridade</th>
+        <th>🔧 Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="4">Carregando...</td></tr>
+      <tr><td colspan="4" class="loading">⏳ Carregando categorias...</td></tr>
     </tbody>
   </table>
-  <button id="refreshCategoriesBtn">Atualizar Lista</button>
+  <button id="refreshCategoriesBtn">🔄 Atualizar Lista</button>
 </div>
 
 <div class="section">
@@ -26,7 +26,7 @@
     <label>Prioridade
       <input type="number" id="catPriority" min="1" max="10" />
     </label>
-    <input type="submit" value="Cadastrar" />
+    <input type="submit" value="📂 Cadastrar Categoria" />
   </form>
   <div id="categoryFormMsg"></div>
 </div>
@@ -41,12 +41,27 @@
       const tbody = document.querySelector('#categoriesTable tbody');
       tbody.innerHTML = '';
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4">Nenhuma categoria cadastrada</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhuma categoria cadastrada ainda</td></tr>';
         return;
       }
       data.forEach(c => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${c.id}</td><td>${c.name}</td><td>${c.priority || ''}</td><td><button onclick="deleteCategory('${c.id}')">Excluir</button></td>`;
+
+        // Priority indicator
+        const priority = c.priority || 0;
+        let priorityIndicator = '<div class="importance-indicator">';
+        for (let i = 1; i <= 5; i++) {
+          const filled = i <= priority ? 'filled' : '';
+          priorityIndicator += `<span class="importance-star ${filled}">★</span>`;
+        }
+        priorityIndicator += `</div><small>Nível ${priority}</small>`;
+
+        row.innerHTML = `
+          <td><code>${c.id.substring(0, 8)}...</code></td>
+          <td><strong>${c.name}</strong></td>
+          <td>${priorityIndicator}</td>
+          <td><button onclick="deleteCategory('${c.id}')">🗑️ Excluir</button></td>
+        `;
         tbody.appendChild(row);
       });
     } catch(err) {

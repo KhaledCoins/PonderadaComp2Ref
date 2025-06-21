@@ -4,17 +4,17 @@
   <table id="usersTable">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Email</th>
-        <th>Ações</th>
+        <th>🆔 ID</th>
+        <th>👤 Nome</th>
+        <th>📧 Email</th>
+        <th>🔧 Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td colspan="4">Carregando...</td></tr>
+      <tr><td colspan="4" class="loading">⏳ Carregando usuários...</td></tr>
     </tbody>
   </table>
-  <button id="refreshUsersBtn">Atualizar Lista</button>
+  <button id="refreshUsersBtn">🔄 Atualizar Lista</button>
 </div>
 
 <div class="section">
@@ -29,7 +29,7 @@
     <label>Senha
       <input type="password" id="password" required />
     </label>
-    <input type="submit" value="Cadastrar" />
+    <input type="submit" value="👤 Cadastrar Usuário" />
   </form>
   <div id="userFormMsg"></div>
 </div>
@@ -44,12 +44,17 @@
       const tbody = document.querySelector('#usersTable tbody');
       tbody.innerHTML = '';
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4">Nenhum usuário encontrado</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhum usuário cadastrado ainda</td></tr>';
         return;
       }
       data.forEach(u => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${u.id}</td><td>${u.name}</td><td>${u.email}</td><td><button onclick="deleteUser('${u.id}')">Excluir</button></td>`;
+        row.innerHTML = `
+          <td><code>${u.id.substring(0, 8)}...</code></td>
+          <td><strong>${u.name}</strong></td>
+          <td>${u.email}</td>
+          <td><button onclick="deleteUser('${u.id}')">🗑️ Excluir</button></td>
+        `;
         tbody.appendChild(row);
       });
     } catch (err) {

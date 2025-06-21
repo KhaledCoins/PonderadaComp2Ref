@@ -8,11 +8,13 @@ const path = require('path');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Middleware para parsing do body - deve vir antes das rotas
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 db.connect()
   .then(() => {
     console.log('Conectado ao banco de dados PostgreSQL');
-
-    app.use(express.json());
 
     const userRoutes = require('./routes/userRoutes');
     app.use('/api/users', userRoutes);
