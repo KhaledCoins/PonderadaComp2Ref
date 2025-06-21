@@ -1,6 +1,10 @@
 # TheBoard - Gerenciador de Tarefas
 
-Uma aplicação completa de gerenciamento de tarefas seguindo o padrão MVC (Model-View-Controller) com Node.js, Express, PostgreSQL e interface web com EJS, voltada para estudantes e jovens profissionais.
+TheBoard é uma aplicação web completa para organização pessoal de tarefas, voltada a estudantes e jovens profissionais. O sistema permite criar tarefas com datas, prioridades, categorias, origens e acompanhá-las em um painel visual de produtividade. Desenvolvido com arquitetura MVC, Node.js e PostgreSQL.
+
+## 🎥 Demonstração do Gerenciador de Tarefas
+
+[📁 Acesse a demonstração completa do sistema](http://drive.google.com/drive/folders/1IhKXg-iDjunbn17FHulxtNrLq2V7IN8Z)
 
 ## 🚀 Funcionalidades
 
